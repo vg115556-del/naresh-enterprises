@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#14532d">
+<title>Naresh Enterprises | Online Order</title>
+<style>
+:root{--green:#14532d;--mint:#ecfdf5;--gold:#fbbf24;--ink:#17221b;--muted:#647067}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f7f5;color:var(--ink)}
+header{background:linear-gradient(135deg,#14532d,#21834b);color:white;padding:24px 18px 28px;border-radius:0 0 24px 24px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:52px;height:52px;border-radius:16px;background:#fff;color:var(--green);display:grid;place-items:center;font-weight:900;font-size:20px}
+h1{font-size:23px;margin:0 0 5px}header p{margin:0;color:#e3f7e9;font-size:14px}
+main{max-width:760px;margin:auto;padding:16px}.notice{background:#fff8dc;border:1px solid #f3df91;border-radius:12px;padding:12px;font-size:13px;line-height:1.45;margin-bottom:16px}
+h2{font-size:18px;margin:20px 0 12px}.products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.product,.panel{background:white;border:1px solid #e2e8e3;border-radius:16px;padding:14px;box-shadow:0 2px 8px #0a241008}
+.emoji{font-size:32px;background:var(--mint);border-radius:12px;padding:12px;display:block;text-align:center;margin-bottom:10px}
+.product h3{font-size:15px;margin:4px 0 6px}.desc{font-size:12px;color:var(--muted);min-height:30px}.price{font-weight:800;color:var(--green);margin:10px 0}
+button{border:0;border-radius:10px;background:var(--green);color:white;font-weight:700;padding:11px 13px;cursor:pointer}button:active{transform:scale(.98)}.add{width:100%}
+label{display:block;font-size:13px;font-weight:700;margin:12px 0 6px}input,textarea,select{width:100%;padding:12px;border:1px solid #ccd7ce;border-radius:10px;font:inherit;background:#fff}textarea{min-height:72px;resize:vertical}
+.line{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #edf0ed;font-size:14px}.qty{display:flex;align-items:center;gap:8px}.qty button{padding:5px 10px}.total{display:flex;justify-content:space-between;font-size:18px;font-weight:800;margin:16px 0}.submit{width:100%;padding:14px;background:#16803c;font-size:16px}.small{font-size:12px;color:var(--muted);line-height:1.5}.empty{color:var(--muted);font-size:14px}.footer{text-align:center;padding:20px;font-size:12px;color:var(--muted)}
+@media(min-width:600px){.products{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">NE</div><div><h1>Naresh Enterprises</h1><p>Products dekhein · Order bhejein · WhatsApp par confirm karein</p></div></div></header>
+<main>
+<div class="notice"><b>Demo app:</b> Neeche diye gaye products aur rates sirf sample hain. Apne asli products, rates aur WhatsApp number bharne se pehle inhe update karein. Ye page order ko WhatsApp message mein taiyar karta hai; online payment/delivery abhi setup nahi hai.</div>
+<h2>Hamare Products</h2>
+<div class="products" id="products"></div>
+<h2>🛒 Aapka Order</h2>
+<section class="panel"><div id="cart"><p class="empty">Abhi cart khaali hai. Product par “Add to Order” dabayein.</p></div><div class="total"><span>Total (sample rates)</span><span id="total">₹0</span></div></section>
+<h2>Customer Details</h2>
+<section class="panel">
+<label for="customer">Aapka naam *</label><input id="customer" placeholder="Poora naam" autocomplete="name">
+<label for="phone">Mobile number *</label><input id="phone" placeholder="10 digit mobile number" inputmode="tel" autocomplete="tel">
+<label for="address">Delivery address / shop address *</label><textarea id="address" placeholder="Pata likhein"></textarea>
+<label for="wa">Naresh Enterprises ka WhatsApp number *</label><input id="wa" placeholder="Country code ke saath, jaise 91XXXXXXXXXX" inputmode="numeric">
+<label for="notes">Extra note (optional)</label><textarea id="notes" placeholder="Jaise delivery ka samay ya koi sawal"></textarea>
+<button class="submit" onclick="sendOrder()">WhatsApp par Order Bhejein</button>
+<p class="small">Button dabane par WhatsApp khulega aur order message taiyar hoga. Customer ko message bhejne ke liye WhatsApp mein Send dabana hoga.</p>
+</section>
+<div class="footer">Naresh Enterprises · Customer order demo</div>
+</main>
+<script>
+const products=[
+{id:1,name:"Ayurvedic Syrup",desc:"Bottle · sample product",price:120,emoji:"🧴"},
+{id:2,name:"Herbal Oil",desc:"Bottle · sample product",price:150,emoji:"🌿"},
+{id:3,name:"Health Tonic",desc:"Bottle · sample product",price:180,emoji:"🍃"},
+{id:4,name:"Tulsi Syrup",desc:"Bottle · sample product",price:95,emoji:"🌱"},
+{id:5,name:"Herbal Care Product",desc:"Pack · sample product",price:80,emoji:"📦"},
+{id:6,name:"Other Product",desc:"Yahan apna product add karein",price:100,emoji:"➕"}
+];
+const cart={};
+const money=n=>"₹"+n.toLocaleString("en-IN");
+function renderProducts(){document.getElementById("products").innerHTML=products.map(p=>`<article class="product"><span class="emoji">${p.emoji}</span><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="price">${money(p.price)}</div><button class="add" onclick="add(${p.id})">+ Add to Order</button></article>`).join("")}
+function add(id){cart[id]=(cart[id]||0)+1;renderCart()}
+function change(id,d){cart[id]=(cart[id]||0)+d;if(cart[id]<=0)delete cart[id];renderCart()}
+function renderCart(){let ids=Object.keys(cart);document.getElementById("cart").innerHTML=ids.length?ids.map(id=>{let p=products.find(x=>x.id==id);return `<div class="line"><div><b>${p.name}</b><br><span class="small">${money(p.price)} each</span></div><div class="qty"><button onclick="change(${id},-1)">−</button><b>${cart[id]}</b><button onclick="change(${id},1)">+</button></div><b>${money(p.price*cart[id])}</b></div>`}).join(""):'<p class="empty">Abhi cart khaali hai. Product par “Add to Order” dabayein.</p>';document.getElementById("total").textContent=money(ids.reduce((s,id)=>s+products.find(p=>p.id==id).price*cart[id],0))}
+function sendOrder(){let ids=Object.keys(cart);let name=document.getElementById("customer").value.trim(),phone=document.getElementById("phone").value.trim(),address=document.getElementById("address").value.trim(),wa=document.getElementById("wa").value.replace(/\D/g,""),notes=document.getElementById("notes").value.trim();if(!ids.length)return alert("Pehle koi product add karein.");if(!name||!phone||!address||!wa)return alert("Naam, mobile, address aur WhatsApp number bharein.");if(wa.length<10)return alert("WhatsApp number sahi format mein bharein, country code ke saath.");let lines=ids.map(id=>{let p=products.find(x=>x.id==id);return `${p.name} x ${cart[id]} = ${money(p.price*cart[id])}`});let total=ids.reduce((s,id)=>s+products.find(p=>p.id==id).price*cart[id],0);let msg=`*New Order - Naresh Enterprises*%0A%0ACustomer: ${encodeURIComponent(name)}%0AMobile: ${encodeURIComponent(phone)}%0AAddress: ${encodeURIComponent(address)}%0A%0A*Products:*%0A${encodeURIComponent(lines.join("\n"))}%0A%0A*Sample total: ${money(total)}*%0AExtra note: ${encodeURIComponent(notes||"None")}%0A%0A_Please confirm availability, final price and delivery._`;window.location.href=`https://wa.me/${wa}?text=${msg}`}
+renderProducts();renderCart();
+</script>
+</body>
+</html>
